@@ -1,0 +1,13 @@
+version: '3.0'
+services:
+  entrypoint:
+    build: .
+    container_name: detection_lct_2024
+    runtime: nvidia
+    shm_size: 128gb
+    volumes:
+      - ./models:/workspace/models  
+
+    image: detection_lct_2024
+
+
