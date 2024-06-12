@@ -42,7 +42,6 @@ bool NvDsInferParseCustomYolov10 (std::vector<NvDsInferLayerInfo> const &outputL
 
   for (int b = 0; b < numBoxesToParse; b++)
   {
-
     NvDsInferObjectDetectionInfo object;
     float rectX1f, rectY1f, rectX2f, rectY2f, rectWf, rectHf;
 
@@ -62,13 +61,14 @@ bool NvDsInferParseCustomYolov10 (std::vector<NvDsInferLayerInfo> const &outputL
     rectWf = rectX2f - rectX1f;
     rectHf = rectY2f - rectY1f;
 
-    object.detectionConfidence = outputScore[0];
+
+    object.detectionConfidence = CLIP(outputScore[0], 0, 1);
     object.classId = outputClassId[0];
 
-    object.left = rectX1f;
-    object.top = rectY1f;
-    object.width = rectWf;
-    object.height = rectHf;
+    object.left = CLIP(rectX1f, 0, networkInfo.width);
+    object.top = CLIP(rectY1f, 0, networkInfo.height);
+    object.width = CLIP(rectWf, 0, networkInfo.width);
+    object.height = CLIP(rectHf, 0, networkInfo.height);
 
     objectList.push_back(object);
 

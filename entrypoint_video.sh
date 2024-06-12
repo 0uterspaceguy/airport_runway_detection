@@ -7,7 +7,8 @@ tracker='nvtracker ll-lib-file=/opt/nvidia/deepstream/deepstream-6.2/lib/libnvds
 demuxer='nvstreamdemux name=demux demux.src_0'
 out_video=drawed_videos/video0.mkv
 
+rm ./result_video.jsonl
 # gst-launch-1.0 filesrc location=${in_video} ! decodebin ! queue ! ${muxer} ! queue ! ${primary} ! queue ! ${demuxer} ! queue ! nvvideoconvert ! nvdsosd ! nvvideoconvert ! "video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080, format=(string)I420" ! nvv4l2h265enc ! h265parse ! matroskamux ! queue ! filesink location=${out_video}
-gst-launch-1.0 filesrc location=${in_video} ! decodebin ! ${muxer} ! ${primary} ! ${tracker} ! ${demuxer} ! nvvideoconvert ! nvdsosd ! nvvideoconvert ! "video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080, format=(string)I420" ! nvv4l2h265enc ! h265parse ! matroskamux ! filesink location=${out_video}
+gst-launch-1.0 filesrc location=${in_video} ! decodebin ! ${muxer} ! ${primary} ! ${tracker} ! ${demuxer} ! nvvideoconvert ! dsexample full-frame=0 ! nvdsosd ! nvvideoconvert ! "video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080, format=(string)I420" ! nvv4l2h265enc ! h265parse ! matroskamux ! filesink location=${out_video}
 
 

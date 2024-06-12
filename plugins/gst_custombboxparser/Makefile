@@ -13,10 +13,16 @@ LFLAGS:= -Wl,--start-group $(LIBS) -Wl,--end-group
 SRCFILES:= nvdsinfer_custombboxparser.cpp
 TARGET_LIB:= libnvds_infercustomparser.so
 
+INSTALL_DIR:=/workspace/models/primary/
+
+
 all: $(TARGET_LIB)
 
 $(TARGET_LIB) : $(SRCFILES)
 	$(CC) -o $@ $^ $(CFLAGS) $(LFLAGS)
+
+install: $(LIB)
+	cp -rv $(TARGET_LIB) $(INSTALL_DIR)
 
 clean:
 	rm -rf $(TARGET_LIB)
