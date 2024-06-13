@@ -9,3 +9,7 @@ def mkdir(path: str):
 def rmdir(path: str):
     if os.path.exists(path):
         rmtree(path)
+
+def reinit_dir(path: str):
+    rmdir(path)
+    mkdir(path)

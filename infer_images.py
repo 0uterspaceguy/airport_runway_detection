@@ -16,7 +16,6 @@ def parse_args():
     parser.add_argument('--iou_thres', type=float, default=0.9, help='iou threshold')
     parser.add_argument('--conf_thres', type=float, default=0.2, help='confidence threshold')
 
-
     args = parser.parse_args()
     return args
 

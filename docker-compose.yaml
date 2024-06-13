@@ -5,9 +5,18 @@ services:
     container_name: detection_lct_2024
     runtime: nvidia
     shm_size: 128gb
+    environment:
+      - FLET_SECRET_KEY:1234
     volumes:
       - ./models:/workspace/models  
 
     image: detection_lct_2024
+
+    ports:
+      - "57776":"57776" # Flet application
+      - "57777":"57777" # Fastapi 
+
+
+    entrypoint: flet run --web --port 57776 app_v2.py
 
 
