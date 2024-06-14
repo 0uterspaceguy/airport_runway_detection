@@ -2,8 +2,15 @@ from fastapi import FastAPI, Response, HTTPException
 from fastapi.responses import FileResponse
 import os
 import uvicorn
+import yaml
 
 app = FastAPI()
+
+with open("/workspace/flet_app_config.yaml") as stream:
+    try:
+        config = yaml.safe_load(stream)
+    except yaml.YAMLError as exc:
+        print(exc)
 
 @app.get("/")
 async def root():
@@ -11,8 +18,9 @@ async def root():
 
 @app.get(path="/download/{filename}")
 def main(filename: str):
-    if os.path.exists(f"./download/{filename}"):
-        return FileResponse(path=f"./download/{filename}",
+    file_path = os.path.join(config["downloads_dir"], filename)
+    if os.path.exists(file_path):
+        return FileResponse(path=file_path,
                             headers={"Content-Disposition": f"attachment; filename={filename}"})
     else:
         raise HTTPException(status_code=404, detail=f"{filename} not found")

@@ -7,7 +7,7 @@ from utils import *
 from flet_apps import MainApp, Detector
 
 def main(page: ft.Page,
-        config_path: str = "./flet_app_config.yaml"):
+        config_path: str = "/workspace/flet_app_config.yaml"):
 
     with open(config_path) as stream:
         try:
@@ -18,10 +18,12 @@ def main(page: ft.Page,
     page.title = config["title"]
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
-    upload_dir = config["uploads_dir"]
+    uploads_dir = config["uploads_dir"]
+    downloads_dir = config["downloads_dir"]
     results_dir = config["results_dir"]
 
-    mkdir(upload_dir)
+    mkdir(uploads_dir)
+    mkdir(downloads_dir)
     mkdir(results_dir)
 
     result_images_dir = os.path.join(results_dir, "images")
@@ -45,7 +47,8 @@ def main(page: ft.Page,
 
     app = MainApp(images_picker=images_picker,
                     videos_picker=videos_picker,
-                    upload_dir=upload_dir,
+                    upload_dir=uploads_dir,
+                    download_dir=downloads_dir,
                     result_images_dir=result_images_dir,
                     result_videos_dir=result_videos_dir,
                     result_txts_dir=result_txts_dir,

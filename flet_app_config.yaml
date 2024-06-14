@@ -1,6 +1,7 @@
 title: "Демонстрация детектора"
-uploads_dir: "./uploads"
-results_dir: "./results"
+uploads_dir: "/workspace/uploads"
+downloads_dir: "/workspace/downloads"
+results_dir: "/workspace/results"
 
 Detector:
   weights_path: "./models/primary/model.pt"

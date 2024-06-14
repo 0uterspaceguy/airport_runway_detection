@@ -11,6 +11,7 @@ class ImagesApp(ft.Column):
     def __init__(self, 
                 images_picker,
                 upload_dir,
+                download_dir,
                 result_images_dir,
                 result_txts_dir,
                 detector,):
@@ -18,6 +19,7 @@ class ImagesApp(ft.Column):
 
         self.detector = detector
         self.upload_dir = upload_dir
+        self.download_dir = download_dir
         self.result_images_dir = result_images_dir
         self.result_txts_dir = result_txts_dir
 
@@ -171,14 +173,16 @@ class ImagesApp(ft.Column):
             ]
 
     def download_results(self, e):
-        temp_zip_name = "./download/yolo_results.zip"
-        file = zipfile.ZipFile(temp_zip_name, "w", zipfile.ZIP_DEFLATED)
+        temp_zip_name = "yolo_results.zip"
+        temp_zip_path = os.path.join(self.download_dir, temp_zip_name)
+
+        file = zipfile.ZipFile(temp_zip_path, "w", zipfile.ZIP_DEFLATED)
         for file_name in os.listdir(self.result_txts_dir):
             file_path = os.path.join(self.result_txts_dir, file_name)
             file.write(file_path)
         file.close()
 
-        e.page.launch_url(f"http://127.0.0.1:57777{temp_zip_name[1:]}", web_window_name='_self')
+        e.page.launch_url(f"http://127.0.0.1:57777/download/{temp_zip_name}", web_window_name='_self')
 
     def right_click(self, e):
         self.current_image_idx = self.current_image_idx + 1 if self.current_image_idx < len(self.drawed_images)-1 else self.current_image_idx

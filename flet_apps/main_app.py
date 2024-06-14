@@ -12,6 +12,7 @@ class MainApp(ft.Column):
                     images_picker,
                     videos_picker,
                     upload_dir: str,
+                    download_dir: str,
                     result_images_dir: str,
                     result_videos_dir: str,
                     result_txts_dir: str,
@@ -21,6 +22,7 @@ class MainApp(ft.Column):
 
         self.images_app = ImagesApp(images_picker=images_picker,
                                     upload_dir=upload_dir,
+                                    download_dir=download_dir,
                                     result_images_dir=result_images_dir,
                                     result_txts_dir=result_txts_dir,
                                     detector=detector,)

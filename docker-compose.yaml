@@ -17,6 +17,6 @@ services:
       - "57777":"57777" # Fastapi 
 
 
-    entrypoint: flet run --web --port 57776 app_v2.py
+    entrypoint: flet run --web --port 57776 flet_app.py
 
 
