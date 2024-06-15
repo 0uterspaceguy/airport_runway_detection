@@ -1,8 +1,4 @@
-images/
-images_results/
-drawed/
-drawed_videos/
-videos/
+results/
 
 __pycache__/
 utils/__pycache__/

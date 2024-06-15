@@ -9,6 +9,7 @@ from .rtsp_app import RtspApp
 
 class MainApp(ft.Column):
     def __init__(self, 
+                    download_url,
                     images_picker,
                     videos_picker,
                     upload_dir: str,
@@ -21,14 +22,16 @@ class MainApp(ft.Column):
                 ):
         super().__init__()
 
-        self.images_app = ImagesApp(images_picker=images_picker,
+        self.images_app = ImagesApp(download_url=download_url,
+                                    images_picker=images_picker,
                                     upload_dir=upload_dir,
                                     download_dir=download_dir,
                                     result_images_dir=result_images_dir,
                                     result_txts_dir=result_txts_dir,
                                     detector=detector,)
 
-        self.videos_app = VideosApp(videos_picker=videos_picker,
+        self.videos_app = VideosApp(download_url=download_url,
+                                    videos_picker=videos_picker,
                                     upload_dir=upload_dir,
                                     download_dir=download_dir,
                                     result_videos_dir=result_videos_dir,
@@ -69,18 +72,6 @@ class MainApp(ft.Column):
             self.rtsp_app,
         ]
 
-    # def add_clicked(self, e):
-    #     task = Task(self.new_task.value, self.task_status_change, self.task_delete)
-    #     self.tasks.controls.append(task)
-    #     self.new_task.value = ""
-    #     self.update()
-
-    # def task_status_change(self):
-    #     self.update()
-
-    # def task_delete(self, task):
-    #     self.tasks.controls.remove(task)
-    #     self.update()
 
     def before_update(self):
         current_status = self.filter.tabs[self.filter.selected_index].text

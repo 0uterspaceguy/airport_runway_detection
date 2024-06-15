@@ -11,6 +11,7 @@ from shutil import copyfile as cp
 
 class VideosApp(ft.Column):
     def __init__(self,
+                download_url,
                 videos_picker,
                 upload_dir,
                 download_dir,
@@ -19,6 +20,8 @@ class VideosApp(ft.Column):
                 ):
         super().__init__()
         self.page = page
+
+        self.download_url = download_url
 
         self.upload_dir = upload_dir
         self.download_dir = download_dir
@@ -82,30 +85,6 @@ class VideosApp(ft.Column):
                 alignment = "CENTER",
                 visible=False,)
 
-        
-        # self.video = ft.Video(
-        #         fit="FIT_WIDTH",
-        #         expand=True,
-        #         playlist=[],
-        #         playlist_mode=ft.PlaylistMode.NONE,
-        #         fill_color=ft.colors.BLUE_400,
-        #         aspect_ratio=16/9,
-        #         volume=0,
-        #         autoplay=True,
-        #         filter_quality=ft.FilterQuality.HIGH,
-        #         muted=False,
-        #         visible=True,
-        #         show_controls=True,
-        #         on_loaded=lambda e: self.lag_update,
-        #         on_error= lambda e: print(e.data, e.name, e.target)
-        #         #     on_enter_fullscreen=lambda e: print("Video entered fullscreen!"),
-        #         #     on_exit_fullscreen=lambda e: print("Video exited fullscreen!"),
-        #         )
-
-        # self.video_wrapper = ft.Container(self.video)
-        # self.video_slider = ft.Slider(min=0, max=100)
-
-
 
         self.controls = [
             self.title_wrapper,
@@ -114,14 +93,14 @@ class VideosApp(ft.Column):
                 controls=[self.load_button_wrapper,
                             self.load_pb_wrapper,
                             self.loaded_message_wrapper,],
-                alignment = "LEFT",
+                alignment = "CENTER",
                 visible=True),
 
              ft.Row(
                 controls=[self.infer_button_wrapper,
                             self.infer_pb_wrapper,
                             self.infer_message_wrapper,],
-                alignment = "LEFT",
+                alignment = "CENTER",
                 visible=True),
 
             ft.Row(
@@ -138,31 +117,24 @@ class VideosApp(ft.Column):
             ]
 
     def slider_changed(self, e):
-        print(f"Slider changed to {e.control.value}")
-
-        print( self.video.get_duration())
         timestamp = int(self.video.get_duration() * e.control.value)
-        print(timestamp)
-
         self.video.seek(timestamp)
-        print("Current position:", self.video.get_current_position())
+
         time.sleep(0.1)
         self.update()
 
     def show_results(self, e):
-        print(self.out_video)
         self.controls.pop(-1)
 
         out_video_name = os.path.basename(self.out_video)
-        out_video_download_path = os.path.join(self.download_dir, out_video_name)
+        self.out_video_download_path = os.path.join(self.download_dir, out_video_name)
 
-        cp(self.out_video, out_video_download_path)
-        # print(out_video_download_path)
+        cp(self.out_video, self.out_video_download_path)
 
-        out_video_url = f"http://127.0.0.1:57777/download/{out_video_name}"
-        # out_video_url = "http://www.w3schools.com/html/mov_bbb.mp4"
-
+        out_video_url = f"{self.download_url}/videos/{out_video_name}"
         print(out_video_url)
+
+
         video_media=ft.VideoMedia(resource=out_video_url)
 
         self.video = ft.Video(
@@ -170,14 +142,14 @@ class VideosApp(ft.Column):
             expand=True,
             playlist=[video_media,],
             playlist_mode=ft.PlaylistMode.SINGLE,
-            fill_color=ft.colors.BLUE_400,
+            fill_color=ft.colors.BLACK,
             aspect_ratio=16/9,
             volume=0,
             autoplay=False,
             filter_quality=ft.FilterQuality.HIGH,
             muted=False,
             visible=True,
-            on_loaded=lambda e: print("HI"),
+            on_loaded=lambda e: self.update(),
             on_error= lambda e: print(e.data, e.name, e.target)
         )
 
@@ -198,6 +170,9 @@ class VideosApp(ft.Column):
 
     def infer_video(self, e):
         self.infer_pb_wrapper.visible = True
+        self.infer_button.disabled = True
+        self.infer_message_wrapper.visible = False
+
         self.update()
 
         video_name = os.listdir(self.upload_dir)[0]
@@ -206,18 +181,16 @@ class VideosApp(ft.Column):
 
         start_time = time.time()
 
-        # val = subprocess.check_call("./entrypoint_video.sh %s %s" % (self.in_video, self.out_video), shell=True)
+        val = subprocess.check_call("./entrypoint_video.sh %s %s" % (self.in_video, self.out_video), shell=True)
 
         end_time = time.time()
-
-        from shutil import copyfile as cp
-        cp(self.in_video, self.out_video)
 
         self.infer_pb_wrapper.visible = False
 
         self.infer_message.value =  f"Время обработки: {round(end_time - start_time, 2)} секунд."
         self.infer_message_wrapper.visible = True
         self.show_results_button_wrapper.visible = True
+        self.infer_button.disabled = False
 
         self.update()
 

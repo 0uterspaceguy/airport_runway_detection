@@ -2,20 +2,25 @@ import zipfile
 import flet as ft
 
 from utils import * 
-from random import shuffle, choice
+from random import shuffle
 
 import cv2
 import base64
+from natsort import natsorted
 
 class ImagesApp(ft.Column):
     def __init__(self, 
+                download_url,
                 images_picker,
                 upload_dir,
                 download_dir,
                 result_images_dir,
                 result_txts_dir,
                 detector,):
+        
         super().__init__()
+
+        self.download_url = download_url
 
         self.detector = detector
         self.upload_dir = upload_dir
@@ -38,10 +43,8 @@ class ImagesApp(ft.Column):
                 controls=[self.title],
                 alignment = "CENTER"
                 )
-        # self.description = ft.Text("В этой вкладке вы можете загрузить одно или несколько изображений и запустить инференс.", 
-        #                             theme_style=ft.TextThemeStyle.BODY_LARGE, text_align="CENTER")
 
-        self.load_pb = ft.ProgressBar(width=300, color="amber", bgcolor="#eeeeee") 
+        self.load_pb = ft.ProgressBar(width=350, color="amber", bgcolor="#eeeeee") 
         self.load_pb_wrapper = ft.Column(
                 controls=[self.load_pb],
                 alignment = "CENTER",
@@ -66,7 +69,7 @@ class ImagesApp(ft.Column):
                 alignment = "CENTER",
                 visible=False,)
 
-        self.infer_pb = ft.ProgressBar(width=300, color="amber", bgcolor="#eeeeee") 
+        self.infer_pb = ft.ProgressBar(width=350, color="amber", bgcolor="#eeeeee") 
         self.infer_pb_wrapper = ft.Column(
                 controls=[self.infer_pb],
                 alignment = "CENTER",
@@ -78,9 +81,15 @@ class ImagesApp(ft.Column):
                 alignment = "CENTER",
                 visible=False)
 
-        self.download_button = ft.ElevatedButton("Скачать результаты...", on_click=self.download_results)
-        self.download_button_wrapper = ft.Column(
-                controls=[self.download_button],
+        self.download_txts_button = ft.ElevatedButton("Скачать аннотации...", on_click=self.download_txts)
+        self.download_txts_button_wrapper = ft.Column(
+                controls=[self.download_txts_button],
+                alignment = "CENTER",
+                visible=False,)
+        
+        self.download_images_button = ft.ElevatedButton("Скачать отрисовку...", on_click=self.download_images)
+        self.download_images_button_wrapper = ft.Column(
+                controls=[self.download_images_button],
                 alignment = "CENTER",
                 visible=False,)
 
@@ -92,8 +101,8 @@ class ImagesApp(ft.Column):
 
         self.image = ft.Image(
             src=f"no path",
-                width=500,
-                height=500,
+                width=700,
+                height=700,
                 fit=ft.ImageFit.CONTAIN,
         )
 
@@ -126,8 +135,6 @@ class ImagesApp(ft.Column):
                 alignment = "RIGHT",
                 visible=False,)
 
-        
-
         self.detector.pbar = self.infer_pb
         self.detector.pbar_w = self.infer_pb_wrapper
         self.detector.msg = self.infer_message
@@ -142,18 +149,19 @@ class ImagesApp(ft.Column):
                 controls=[self.load_button_wrapper,
                             self.load_pb_wrapper,
                             self.loaded_message_wrapper,],
-                alignment = "LEFT",
+                alignment = "CENTER",
                 visible=True),
 
              ft.Row(
                 controls=[self.infer_button_wrapper,
                             self.infer_pb_wrapper,
                             self.infer_message_wrapper,],
-                alignment = "LEFT",
+                alignment = "CENTER",
                 visible=True),
 
             ft.Row(
-                controls=[self.download_button_wrapper,
+                controls=[self.download_txts_button_wrapper,
+                          self.download_images_button_wrapper,  
                             self.show_results_button_wrapper],
                 alignment = "CENTER",
                 visible=True),
@@ -163,26 +171,42 @@ class ImagesApp(ft.Column):
                 alignment = "CENTER",
                 visible=True)
 
-            # self.load_button_wrapper,
-            # self.load_pb_wrapper,
-            # self.loaded_message_wrapper,
-
-            # self.infer_button_wrapper,
-            # self.infer_pb_wrapper,
-            # self.infer_message_wrapper,
             ]
+        
 
-    def download_results(self, e):
-        temp_zip_name = "yolo_results.zip"
+    def download_txts(self, e):
+        sessions_list = natsorted(os.listdir(self.result_txts_dir))
+        session_ts = sessions_list[-1]
+
+        current_result_dir = os.path.join(self.result_txts_dir, session_ts)
+
+        temp_zip_name = f"yolo_annotations_{session_ts}.zip"
         temp_zip_path = os.path.join(self.download_dir, temp_zip_name)
 
         file = zipfile.ZipFile(temp_zip_path, "w", zipfile.ZIP_DEFLATED)
-        for file_name in os.listdir(self.result_txts_dir):
-            file_path = os.path.join(self.result_txts_dir, file_name)
-            file.write(file_path)
+        for file_name in os.listdir(current_result_dir):
+            file_path = os.path.join(current_result_dir, file_name)
+            file.write(file_path, os.path.basename(file_path))
         file.close()
 
-        e.page.launch_url(f"http://127.0.0.1:57777/download/{temp_zip_name}", web_window_name='_self')
+        e.page.launch_url(f"{self.download_url}/{temp_zip_name}", web_window_name='_self')
+
+    def download_images(self, e):
+        sessions_list = natsorted(os.listdir(self.result_images_dir))
+        session_ts = sessions_list[-1]
+
+        current_result_dir = os.path.join(self.result_images_dir, session_ts)
+
+        temp_zip_name = f"yolo_images_{session_ts}.zip"
+        temp_zip_path = os.path.join(self.download_dir, temp_zip_name)
+
+        file = zipfile.ZipFile(temp_zip_path, "w", zipfile.ZIP_DEFLATED)
+        for file_name in os.listdir(current_result_dir):
+            file_path = os.path.join(current_result_dir, file_name)
+            file.write(file_path, os.path.basename(file_path))
+        file.close()
+
+        e.page.launch_url(f"{self.download_url}/{temp_zip_name}", web_window_name='_self')
 
     def right_click(self, e):
         self.current_image_idx = self.current_image_idx + 1 if self.current_image_idx < len(self.drawed_images)-1 else self.current_image_idx
@@ -205,7 +229,11 @@ class ImagesApp(ft.Column):
 
 
     def show_results(self, e):
-        self.drawed_images = [os.path.join(self.result_images_dir, image_name) for image_name in os.listdir(self.result_images_dir)]
+        sessions_list = natsorted(os.listdir(self.result_txts_dir))
+        session_ts = sessions_list[-1]
+
+        self.drawed_images = [os.path.join(self.result_images_dir, session_ts, image_name) 
+                              for image_name in os.listdir(os.path.join(self.result_images_dir,session_ts))]
         shuffle(self.drawed_images)
 
         self.image_wrapper.visible = True
@@ -215,7 +243,6 @@ class ImagesApp(ft.Column):
 
         self.current_image_idx = 0
         self.set_image(self.current_image_idx)
-
 
 
     def upload_images(self, e):

@@ -25,9 +25,14 @@ class Detector():
                   images_dir: str,
                   result_txts_dir: str,
                   result_images_dir: str):
+        
+        session_ts = make_timestamp()
+        
+        current_results_txts_dir = os.path.join(result_txts_dir, session_ts)
+        current_result_images_dir = os.path.join(result_images_dir, session_ts)
 
-        reinit_dir(result_txts_dir)
-        reinit_dir(result_images_dir)
+        reinit_dir(current_results_txts_dir)
+        reinit_dir(current_result_images_dir)
 
         self.app_page.infer_pb_wrapper.visible=True
         self.app_page.infer_pb.value = 0
@@ -51,15 +56,14 @@ class Detector():
             image_name = os.path.basename(result.path)
 
             label_name = os.path.splitext(image_name)[0]+".txt"
-            label_path = os.path.join(result_txts_dir, label_name)
+            label_path = os.path.join(current_results_txts_dir, label_name)
             result.save_txt(label_path)
 
             self.pbar.value = idx/total_num
             self.app_page.update()
 
-            result.save(os.path.join(result_images_dir, image_name))
+            result.save(os.path.join(current_result_images_dir, image_name))
 
-        
         end_time = time.time()
 
         self.app_page.infer_pb_wrapper.visible=False
@@ -67,7 +71,8 @@ class Detector():
         self.app_page.infer_message_wrapper.visible = True
 
         self.app_page.show_results_button_wrapper.visible = True
-        self.app_page.download_button_wrapper.visible = True
+        self.app_page.download_txts_button_wrapper.visible = True
+        self.app_page.download_images_button_wrapper.visible = True
 
 
         self.app_page.update()

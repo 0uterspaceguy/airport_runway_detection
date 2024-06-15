@@ -24,7 +24,7 @@ custom-lib-path=./libnvds_infercustomparser.so
 
 #ALL
 [class-attrs-all]
-nms-iou-threshold=0.9
+nms-iou-threshold=0.4
 pre-cluster-threshold=0.3
 
 #COPTER

@@ -1,7 +1,12 @@
 title: "Демонстрация детектора"
+
 uploads_dir: "/workspace/uploads"
 downloads_dir: "/workspace/downloads"
 results_dir: "/workspace/results"
+
+# download_server_url: "http://0.0.0.0:57777/download"
+download_server_url: "/download"
+
 
 Detector:
   weights_path: "./models/primary/model.pt"

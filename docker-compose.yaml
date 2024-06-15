@@ -3,20 +3,18 @@ services:
   entrypoint:
     build: .
     container_name: detection_lct_2024
+    image: detection_lct_2024
     runtime: nvidia
-    shm_size: 128gb
+    shm_size: 32gb
     environment:
-      - FLET_SECRET_KEY:1234
+      - FLET_SECRET_KEY=1234
     volumes:
       - ./models:/workspace/models  
-
-    image: detection_lct_2024
+      - ./results:/workspace/results  
 
     ports:
-      - "57776":"57776" # Flet application
-      - "57777":"57777" # Fastapi 
+      - "57777:57777" # FLET 
 
-
-    entrypoint: flet run --web --port 57776 flet_app.py
+    entrypoint: python3 main.py
 
 

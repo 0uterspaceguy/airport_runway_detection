@@ -45,7 +45,10 @@ def main(page: ft.Page,
 
     page.scroll = "ALWAYS"
 
-    app = MainApp(images_picker=images_picker,
+    download_url = config['download_server_url']
+
+    app = MainApp(download_url=download_url,
+                    images_picker=images_picker,
                     videos_picker=videos_picker,
                     upload_dir=uploads_dir,
                     download_dir=downloads_dir,

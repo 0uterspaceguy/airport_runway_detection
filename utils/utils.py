@@ -1,5 +1,11 @@
 import os
 from shutil import rmtree
+from datetime import datetime
+
+def make_timestamp():
+  dt = datetime.now()
+  timestamp = f"{dt.year}_{dt.month}_{dt.day}_{dt.hour}_{dt.minute}_{dt.second}"
+  return timestamp
 
 
 def mkdir(path: str):
