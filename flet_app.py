@@ -52,10 +52,11 @@ def main(page: ft.Page,
                     result_images_dir=result_images_dir,
                     result_videos_dir=result_videos_dir,
                     result_txts_dir=result_txts_dir,
-                    detector=detector)
+                    detector=detector,
+                    page=page)
 
     page.add(app)
 
 
 if __name__ == "__main__":
-    ft.app(target=main, upload_dir="./uploads", view=ft.AppView.WEB_BROWSER)
+    ft.app(target=main, upload_dir="./uploads", view=ft.AppView.WEB_BROWSER) # 

@@ -17,6 +17,7 @@ class MainApp(ft.Column):
                     result_videos_dir: str,
                     result_txts_dir: str,
                     detector,
+                    page,
                 ):
         super().__init__()
 
@@ -29,7 +30,9 @@ class MainApp(ft.Column):
 
         self.videos_app = VideosApp(videos_picker=videos_picker,
                                     upload_dir=upload_dir,
-                                    result_videos_dir=result_videos_dir,)
+                                    download_dir=download_dir,
+                                    result_videos_dir=result_videos_dir,
+                                    page=page)
         self.rtsp_app = RtspApp()
 
         self.videos_app.visible = False
@@ -45,7 +48,7 @@ class MainApp(ft.Column):
                   ft.Tab(text="Videos"), 
                   ft.Tab(text="RTSP")],
         )
-        self.width = 700
+        self.width = 1000
 
         self.controls = [
             ft.Row(
