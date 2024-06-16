@@ -2,8 +2,6 @@ FROM nvcr.io/nvidia/deepstream:6.2-devel
 ARG DEBIAN_FRONTEND=noninteractive
 ARG CUDA_VER=11
 
-RUN echo pwd
-
 RUN apt-get update && apt-get install python3-dev python3-pip ffmpeg libsm6 libxext6 zenity libmpv-dev mpv -y
 
 #Just for inference on files
