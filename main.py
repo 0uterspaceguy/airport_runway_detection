@@ -2,18 +2,18 @@ from contextlib import asynccontextmanager
 
 import flet as ft
 import flet.fastapi as flet_fastapi
-from fastapi import FastAPI
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
-import yaml
 import uvicorn
 
+import logging
 import yaml
 import os
 
 from utils import *
 from flet_apps import MainApp, Detector
 from downloader import range_requests_response
+import subprocess
 
 with open("/workspace/flet_app_config.yaml") as stream:
     try:
@@ -28,8 +28,6 @@ async def lifespan(app: FastAPI):
     await flet_fastapi.app_manager.shutdown()
 
 app = FastAPI(lifespan=lifespan)
-
-
 
 @app.get(path="/download/videos/{filename}")
 def get_video(request: Request, filename: str):
@@ -51,7 +49,6 @@ def get_video(request: Request, filename: str):
 
     response = FileResponse(path=file_path, filename=filename)
     return response
-
 
 def main(page: ft.Page,):
     uploads_dir = config["uploads_dir"]
@@ -83,7 +80,7 @@ def main(page: ft.Page,):
     page.overlay.append(videos_picker)
     page.update()
 
-    download_url = config['download_server_url']
+    download_url = config['download_url']
 
     app_flet = MainApp(download_url=download_url,
                     images_picker=images_picker,
@@ -98,7 +95,11 @@ def main(page: ft.Page,):
 
     page.add(app_flet)
 
-app.mount("/detector", flet_fastapi.app(main, upload_dir="./uploads"))
+app.mount("/", flet_fastapi.app(main, upload_dir=config["uploads_dir"]))
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=57777, log_level="info")
+    logging.info("Building engines. This may take a while...")
+    val = subprocess.check_call("./build_engines.sh", shell=True)
+
+    logging.info("Starting app...")
+    uvicorn.run("main:app", host=config["host"], port=config["port"], log_level="info")

@@ -4,7 +4,7 @@ import argparse
 from tqdm import tqdm
 
 from ultralytics import YOLOv10
-from utils import mkdir, rmdir
+from utils import *
 
 
 def parse_args():
@@ -13,7 +13,7 @@ def parse_args():
     parser.add_argument('--output', type=str, default='./images_results', help='path to result files')
     parser.add_argument('--model', type=str, default='./models/primary/model.pt', help='path to model engine')
     parser.add_argument('--imgsz', type=int, default=1024, help='size of image')
-    parser.add_argument('--iou_thres', type=float, default=0.9, help='iou threshold')
+    parser.add_argument('--iou_thres', type=float, default=0.5, help='iou threshold')
     parser.add_argument('--conf_thres', type=float, default=0.2, help='confidence threshold')
 
     args = parser.parse_args()
@@ -22,8 +22,7 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
 
-    rmdir(args.output)
-    mkdir(args.output)
+    reinit_dir(args.output)
 
     model = YOLOv10(args.model)
 

@@ -101,8 +101,8 @@ class ImagesApp(ft.Column):
 
         self.image = ft.Image(
             src=f"no path",
-                width=700,
-                height=700,
+                width=900,
+                height=600,
                 fit=ft.ImageFit.CONTAIN,
         )
 
@@ -173,7 +173,6 @@ class ImagesApp(ft.Column):
 
             ]
         
-
     def download_txts(self, e):
         sessions_list = natsorted(os.listdir(self.result_txts_dir))
         session_ts = sessions_list[-1]
@@ -247,19 +246,23 @@ class ImagesApp(ft.Column):
 
     def upload_images(self, e):
         if self.images_picker.result != None and self.images_picker.result.files != None:
+            self.infer_button.disabled = True
+            self.load_button.disabled = True
+            self.download_txts_button.disabled = True
+            self.download_images_button.disabled = True
+            self.show_results_button.disabled = True
+
+            self.loaded_message_wrapper.visible = False
+            self.load_pb.value = 0
+            self.load_pb_wrapper.visible = True
+
+            self.update()
 
             reinit_dir(self.upload_dir)
 
             upload_list = []
             self.prog_bars = {}
             self.num_files_to_load = 0
-
-            self.loaded_message_wrapper.visible = False
-
-            self.load_pb.value = 0
-            self.load_pb_wrapper.visible = True
-
-            self.update()
 
             for f in self.images_picker.result.files:
                 upload_list.append(
@@ -278,6 +281,12 @@ class ImagesApp(ft.Column):
 
         self.load_pb.value = current_progress
         if current_progress == 1:
+            self.infer_button.disabled = False
+            self.load_button.disabled = False
+            self.download_txts_button.disabled = False
+            self.download_images_button.disabled = False
+            self.show_results_button.disabled = False
+
             self.load_pb_wrapper.visible = False
             self.load_button.disabled = False
 

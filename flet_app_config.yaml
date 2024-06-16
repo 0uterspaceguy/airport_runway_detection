@@ -4,9 +4,10 @@ uploads_dir: "/workspace/uploads"
 downloads_dir: "/workspace/downloads"
 results_dir: "/workspace/results"
 
-# download_server_url: "http://0.0.0.0:57777/download"
-download_server_url: "/download"
+download_url: "/download"
 
+host: "0.0.0.0"
+port: 57777
 
 Detector:
   weights_path: "./models/primary/model.pt"

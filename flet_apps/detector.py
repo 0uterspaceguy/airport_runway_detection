@@ -34,8 +34,15 @@ class Detector():
         reinit_dir(current_results_txts_dir)
         reinit_dir(current_result_images_dir)
 
+        self.app_page.infer_button.disabled = True
+        self.app_page.load_button.disabled = True
+        self.app_page.download_txts_button.disabled = True
+        self.app_page.download_images_button.disabled = True
+        self.app_page.show_results_button.disabled = True
+
         self.app_page.infer_pb_wrapper.visible=True
         self.app_page.infer_pb.value = 0
+
         self.app_page.infer_message_wrapper.visible = False
         self.app_page.update()
 
@@ -59,6 +66,10 @@ class Detector():
             label_path = os.path.join(current_results_txts_dir, label_name)
             result.save_txt(label_path)
 
+            if not len(result):
+                with open(label_path, "w"):
+                    pass
+
             self.pbar.value = idx/total_num
             self.app_page.update()
 
@@ -73,6 +84,12 @@ class Detector():
         self.app_page.show_results_button_wrapper.visible = True
         self.app_page.download_txts_button_wrapper.visible = True
         self.app_page.download_images_button_wrapper.visible = True
+
+        self.app_page.infer_button.disabled = False
+        self.app_page.load_button.disabled = False
+        self.app_page.download_txts_button.disabled = False
+        self.app_page.download_images_button.disabled = False
+        self.app_page.show_results_button.disabled = False
 
 
         self.app_page.update()

@@ -1,10 +1,8 @@
 import flet as ft
-import os
 
 from utils import *
 from .images_app import ImagesApp
 from .videos_app import VideosApp
-from .rtsp_app import RtspApp
 
 
 class MainApp(ft.Column):
@@ -36,10 +34,8 @@ class MainApp(ft.Column):
                                     download_dir=download_dir,
                                     result_videos_dir=result_videos_dir,
                                     page=page)
-        self.rtsp_app = RtspApp()
 
         self.videos_app.visible = False
-        self.rtsp_app.visible = False
 
         self.title = ft.Text("Демонстрация детектора", theme_style=ft.TextThemeStyle.DISPLAY_MEDIUM)
 
@@ -49,7 +45,7 @@ class MainApp(ft.Column):
             on_change=self.tabs_changed,
             tabs=[ft.Tab(text="Images"), 
                   ft.Tab(text="Videos"), 
-                  ft.Tab(text="RTSP")],
+                  ],
         )
         self.width = 1000
 
@@ -69,7 +65,6 @@ class MainApp(ft.Column):
             ),
             self.images_app,
             self.videos_app,
-            self.rtsp_app,
         ]
 
 
@@ -79,17 +74,10 @@ class MainApp(ft.Column):
         if current_status == "Images":
             self.images_app.visible = True
             self.videos_app.visible = False
-            self.rtsp_app.visible = False
 
         elif current_status == "Videos":
             self.images_app.visible = False
-            self.videos_app.visible = True
-            self.rtsp_app.visible = False
-        
-        elif current_status == "RTSP":
-            self.images_app.visible = False
-            self.videos_app.visible = False
-            self.rtsp_app.visible = True
+            self.videos_app.visible = True    
         
 
     def tabs_changed(self, e):

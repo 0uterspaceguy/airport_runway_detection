@@ -2,5 +2,6 @@ results/
 
 __pycache__/
 utils/__pycache__/
+flet_apps/__pycache__/
 
 .vscode/

@@ -9,11 +9,10 @@ services:
     environment:
       - FLET_SECRET_KEY=1234
     volumes:
-      - ./models:/workspace/models  
-      - ./results:/workspace/results  
-
+      - ./models:/workspace/models  # Папка с моделями
+      - ./results:/workspace/results  # Папка с результатами
     ports:
-      - "57777:57777" # FLET 
+      - "57777:57777"
 
     entrypoint: python3 main.py
 

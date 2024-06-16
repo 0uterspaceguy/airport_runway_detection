@@ -23,10 +23,7 @@ RUN make && make install
 
 RUN apt-get install --reinstall gstreamer1.0-plugins-ugly gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-libav gstreamer1.0-plugins-bad gstreamer1.0-plugins-good libavcodec58 libavutil56 libvpx6 libx264-155 libx265-179 libmpg123-0 -y
 
-
 WORKDIR /workspace
 
-
-# CMD /usr/src/tensorrt/bin/trtexec --onnx=/workspace/models/primary/model.onnx --saveEngine=/workspace/models/primary/model.onnx_b1_gpu0_fp16.engine --fp16
-
+RUN chmod +x ./build_engines.sh ./entrypoint_video.sh
 

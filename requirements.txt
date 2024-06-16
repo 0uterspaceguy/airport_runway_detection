@@ -4,5 +4,5 @@ opencv-python==4.9.0.80
 huggingface-hub==0.23.2
 flet==0.22.1
 dill==0.3.8
-natsort
-
+natsort==8.4.0
+jsonlines==4.0.0

@@ -32,6 +32,16 @@
 
 using json = nlohmann::json;
 
+
+std::map<int, NvOSD_ColorParams> class_colors = {
+    {0, {1.0, 0.0, 0.0, 1.0}}, 
+    {1, {0.0, 1.0, 0.0, 1.0}}, 
+    {2, {0.0, 1.0, 0.0, 1.0}},  
+    {3, {0.0, 1.0, 0.0, 1.0}},  
+    {4, {1.0, 0.0, 0.0, 1.0}},  
+    };
+
+
 GST_DEBUG_CATEGORY_STATIC (gst_dsexample_debug);
 #define GST_CAT_DEFAULT gst_dsexample_debug
 #define USE_EGLIMAGE 1
@@ -786,6 +796,7 @@ gst_dsexample_transform_ip (GstBaseTransform * btrans, GstBuffer * inbuf)
       }
     }
 
+
     for (l_frame = batch_meta->frame_meta_list; l_frame != NULL;
       l_frame = l_frame->next)
     {
@@ -797,7 +808,7 @@ gst_dsexample_transform_ip (GstBaseTransform * btrans, GstBuffer * inbuf)
             obj_meta = (NvDsObjectMeta *) (l_obj->data);
          
             NvOSD_RectParams rect_params = obj_meta->rect_params; 
-
+ 
             json jsonfile;
 
             jsonfile["x"] = rect_params.left;
@@ -848,6 +859,11 @@ gst_dsexample_transform_ip (GstBaseTransform * btrans, GstBuffer * inbuf)
           l_obj = l_obj->next)
       {
         obj_meta = (NvDsObjectMeta *) (l_obj->data);
+
+        NvOSD_ColorParams color = class_colors[obj_meta->class_id];
+        obj_meta->rect_params.border_color = color;
+
+
 
         if (dsexample->blur_objects) {
           /* gaussian blur the detected objects using opencv */
@@ -966,7 +982,7 @@ attach_metadata_full_frame (GstDsExample * dsexample, NvDsFrameMeta *frame_meta,
     /* Red border of width 6 */
     rect_params.border_width = 3;
     rect_params.border_color = (NvOSD_ColorParams) {
-    1, 0, 0, 1};
+    1, 1, 0, 1};
 
     /* Scale the bounding boxes proportionally based on how the object/frame was
      * scaled during input */
@@ -980,7 +996,9 @@ attach_metadata_full_frame (GstDsExample * dsexample, NvDsFrameMeta *frame_meta,
         rect_params.top, rect_params.width, rect_params.height, obj->label);
 
     object_meta->object_id = UNTRACKED_OBJECT_ID;
-    g_strlcpy (object_meta->obj_label, obj->label, MAX_LABEL_SIZE);
+
+
+    // g_strlcpy (object_meta->obj_label, obj->label, MAX_LABEL_SIZE);
     /* display_text required heap allocated memory */
     text_params.display_text = g_strdup (obj->label);
     /* Display text above the left top corner of the object */
@@ -1028,12 +1046,17 @@ attach_metadata_object (GstDsExample * dsexample, NvDsObjectMeta * obj_meta,
   NvOSD_TextParams & text_params = obj_meta->text_params;
   NvOSD_RectParams & rect_params = obj_meta->rect_params;
 
+  // std::cout << label_info->result_label;
+  // std::cout << output->object[0].label;
+
+
+
   /* Below code to display the result */
   /* Set black background for the text
    * display_text required heap allocated memory */
   if (text_params.display_text) {
-    gchar *conc_string = g_strconcat (text_params.display_text, " ",
-        output->object[0].label, NULL);
+    gchar *conc_string = g_strconcat (text_params.display_text, "",
+        "", NULL);
     g_free (text_params.display_text);
     text_params.display_text = conc_string;
   } else {
@@ -1050,6 +1073,9 @@ attach_metadata_object (GstDsExample * dsexample, NvDsObjectMeta * obj_meta,
     text_params.set_bg_clr = 1;
     text_params.text_bg_clr = (NvOSD_ColorParams) {
     0, 0, 0, 1};
+
+ 
+
   }
   nvds_release_meta_lock (batch_meta);
 }

@@ -19,3 +19,12 @@ def rmdir(path: str):
 def reinit_dir(path: str):
     rmdir(path)
     mkdir(path)
+
+
+class_id2danger = {
+    0:True,
+    1:False,
+    2:False,
+    3:False,
+    4:True,
+}
